@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HINT - Connect Stories, People, and Moments</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up { animation: fadeUp 0.6s ease-out; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+  <nav class="fixed w-full backdrop-blur-lg bg-white/70 z-50">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="w-32">
+        <img src="/logo.svg" alt="HINT" class="w-full"/>
+      </div>
+      <div class="space-x-4">
+        <a href="/login" class="text-gray-600 hover:text-gray-900">Login</a>
+        <a href="/signup" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-24">
+    <section class="container mx-auto px-4 py-16 text-center animate-fade-up">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+        The Social Platform That Connects<br/>
+        <span class="text-purple-600">Stories, People, and Moments</span>
+      </h1>
+      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        Experience a new way of connecting with people through meaningful stories and shared moments.
+      </p>
+      <div class="space-x-4">
+        <a href="/signup" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition transform hover:-translate-y-1">
+          Get Started
+        </a>
+        <a href="/login" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-lg hover:bg-gray-50 transition transform hover:-translate-y-1">
+          Login
+        </a>
+      </div>
+    </section>
+
+    <section class="container mx-auto px-4 py-16">
+      <h2 class="text-3xl font-bold text-center mb-12">How it Works</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-6 bg-white/60 backdrop-blur-lg rounded-xl hover:shadow-lg transition">
+          <div class="text-4xl mb-4">👤</div>
+          <h3 class="text-xl font-semibold mb-2">Create Profile</h3>
+          <p class="text-gray-600">Set up your unique profile and start your journey.</p>
+        </div>
+        <div class="p-6 bg-white/60 backdrop-blur-lg rounded-xl hover:shadow-lg transition">
+          <div class="text-4xl mb-4">🤝</div>
+          <h3 class="text-xl font-semibold mb-2">Connect</h3>
+          <p class="text-gray-600">Find and connect with people who share your interests.</p>
+        </div>
+        <div class="p-6 bg-white/60 backdrop-blur-lg rounded-xl hover:shadow-lg transition">
+          <div class="text-4xl mb-4">📱</div>
+          <h3 class="text-xl font-semibold mb-2">Share</h3>
+          <p class="text-gray-600">Share your stories and moments with your network.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white/70 backdrop-blur-lg mt-16">
+    <div class="container mx-auto px-4 py-8">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="font-semibold mb-2">Contact</h3>
+          <a href="mailto:contact@hint.social" class="text-purple-600">contact@hint.social</a>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-2">Legal</h3>
+          <div class="space-y-1">
+            <a href="/terms" class="block text-gray-600 hover:text-gray-900">Terms of Service</a>
+            <a href="/privacy" class="block text-gray-600 hover:text-gray-900">Privacy Policy</a>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-2">Follow Us</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-600 hover:text-purple-600">Twitter</a>
+            <a href="#" class="text-gray-600 hover:text-purple-600">Instagram</a>
+            <a href="#" class="text-gray-600 hover:text-purple-600">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
