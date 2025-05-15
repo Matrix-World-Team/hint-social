@@ -33,10 +33,9 @@ const signupSchema = insertUserSchema.extend({
     .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
   email: z.string()
     .email("Please enter a valid email address"),
-  age: z.number()
-    .int()
-    .min(13, "You must be at least 13 years old")
-    .max(120, "Please enter a valid age"),
+  birthMonth: z.string().min(1, "Please select a month"),
+  birthDay: z.string().min(1, "Please select a day"),
+  birthYear: z.string().min(1, "Please select a year"),
   countryCode: z.string().min(1, "Please select a country code"),
   phoneNumber: z.string().min(1, "Please enter your phone number"),
   password: z.string()
@@ -45,6 +44,38 @@ const signupSchema = insertUserSchema.extend({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
+}).refine((data) => {
+  // Calculate age from birth date
+  const birthDate = new Date(
+    parseInt(data.birthYear),
+    parseInt(data.birthMonth) - 1, // JavaScript months are 0-indexed
+    parseInt(data.birthDay)
+  );
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  // Adjust age if birthday hasn't occurred yet this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age >= 13; // Ensure user is at least 13 years old
+}, {
+  message: "You must be at least 13 years old to sign up",
+  path: ["birthYear"],
+}).refine((data) => {
+  // Validate that the birth date is valid
+  const birthDate = new Date(
+    parseInt(data.birthYear),
+    parseInt(data.birthMonth) - 1,
+    parseInt(data.birthDay)
+  );
+  
+  return !isNaN(birthDate.getTime());
+}, {
+  message: "Please enter a valid birth date",
+  path: ["birthDay"],
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -65,7 +96,9 @@ export const SignupPage: React.FC = () => {
     defaultValues: {
       username: "",
       email: "",
-      age: undefined,
+      birthMonth: "",
+      birthDay: "",
+      birthYear: "",
       country: "",
       countryCode: "",
       phoneNumber: "",
@@ -74,19 +107,68 @@ export const SignupPage: React.FC = () => {
     }
   });
 
+  const [ageConfirmOpen, setAgeConfirmOpen] = useState(false);
+  const [calculatedAge, setCalculatedAge] = useState<number | null>(null);
+  const [formDataCache, setFormDataCache] = useState<SignupFormValues | null>(null);
+
+  // Calculate age from birth date
+  const calculateAge = (year: string, month: string, day: string): number => {
+    const birthDate = new Date(
+      parseInt(year),
+      parseInt(month) - 1, // JavaScript months are 0-indexed
+      parseInt(day)
+    );
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    // Adjust age if birthday hasn't occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
+  
   const onSubmit = async (data: SignupFormValues) => {
+    // Calculate the user's age
+    const age = calculateAge(data.birthYear, data.birthMonth, data.birthDay);
+    
+    // Show age confirmation dialog
+    if (!ageConfirmOpen) {
+      setCalculatedAge(age);
+      setFormDataCache(data);
+      setAgeConfirmOpen(true);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
+      // Use the confirmed data from cache
+      const submitData = formDataCache || data;
+      
       // Combine country code and phone number for storage
-      const phone = `${data.countryCode} ${data.phoneNumber}`;
+      const phone = `${submitData.countryCode} ${submitData.phoneNumber}`;
       
-      // Remove fields not in the API schema
-      const { countryCode, phoneNumber, confirmPassword, ...apiData } = data;
+      // Remove fields not in the API schema and add calculated age
+      const { 
+        countryCode, 
+        phoneNumber, 
+        confirmPassword, 
+        birthMonth, 
+        birthDay, 
+        birthYear, 
+        ...restData 
+      } = submitData;
       
-      const response = await apiRequest('POST', '/api/signup', {
-        ...apiData,
-        phone
+      const response = await apiRequest('/api/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...restData,
+          phone,
+          age: calculatedAge // Use the calculated and confirmed age
+        })
       });
 
       if (response.ok) {
@@ -114,6 +196,8 @@ export const SignupPage: React.FC = () => {
       }
     } finally {
       setIsSubmitting(false);
+      setAgeConfirmOpen(false);
+      setFormDataCache(null);
     }
   };
 
@@ -222,19 +306,99 @@ export const SignupPage: React.FC = () => {
                 </div>
 
                 <div className="input-focus-effect">
-                  <Label htmlFor="age" className="text-sm font-medium text-gray-700">
-                    Age
+                  <Label htmlFor="birthDate" className="text-sm font-medium text-gray-700">
+                    Date of Birth
                   </Label>
-                  <Input
-                    id="age"
-                    type="number"
-                    placeholder="Your age"
-                    className={`mt-1 ${errors.age ? 'border-red-500 focus:ring-red-500' : ''}`}
-                    {...register("age", { valueAsNumber: true })}
-                  />
-                  {errors.age && (
-                    <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
+                  <div className="grid grid-cols-3 gap-2 mt-1">
+                    {/* Month Select */}
+                    <div>
+                      <Controller
+                        name="birthMonth"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger
+                              className={errors.birthMonth ? 'border-red-500 focus:ring-red-500' : ''}
+                            >
+                              <SelectValue placeholder="Month" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                                <SelectItem key={month} value={month.toString()}>
+                                  {new Date(0, month - 1).toLocaleString('default', { month: 'long' })}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                    
+                    {/* Day Select */}
+                    <div>
+                      <Controller
+                        name="birthDay"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger
+                              className={errors.birthDay ? 'border-red-500 focus:ring-red-500' : ''}
+                            >
+                              <SelectValue placeholder="Day" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                                <SelectItem key={day} value={day.toString()}>
+                                  {day}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                    
+                    {/* Year Select */}
+                    <div>
+                      <Controller
+                        name="birthYear"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger
+                              className={errors.birthYear ? 'border-red-500 focus:ring-red-500' : ''}
+                            >
+                              <SelectValue placeholder="Year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                <SelectItem key={year} value={year.toString()}>
+                                  {year}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  {(errors.birthMonth || errors.birthDay || errors.birthYear) && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.birthMonth?.message || errors.birthDay?.message || errors.birthYear?.message}
+                    </p>
                   )}
+                  <p className="mt-1 text-xs text-gray-500">
+                    You must be at least 13 years old to register
+                  </p>
                 </div>
 
                 <div className="input-focus-effect">
@@ -399,6 +563,85 @@ export const SignupPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Age Confirmation Dialog */}
+      <Dialog open={ageConfirmOpen} onOpenChange={setAgeConfirmOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Your Age</DialogTitle>
+            <DialogDescription>
+              Please verify that your age information is correct.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <span className="text-5xl font-bold text-blue-600 dark:text-blue-400">
+                {calculatedAge}
+              </span>
+              <span className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                years old
+              </span>
+            </div>
+            
+            <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+              {formDataCache && (
+                <p>
+                  Born on {" "}
+                  {new Date(
+                    parseInt(formDataCache.birthYear),
+                    parseInt(formDataCache.birthMonth) - 1,
+                    parseInt(formDataCache.birthDay)
+                  ).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAgeConfirmOpen(false)}>
+              Go Back
+            </Button>
+            <Button 
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg 
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    ></circle>
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Creating account...
+                </>
+              ) : (
+                "Confirm & Continue"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
