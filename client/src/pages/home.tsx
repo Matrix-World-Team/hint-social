@@ -416,9 +416,18 @@ export const Home: React.FC = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 bg-gray-50 relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 -z-10 opacity-50">
+      <section id="how-it-works" className="py-24 relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0 -z-10">
+          <div 
+            className="absolute top-0 left-0 w-full h-full" 
+            style={{ 
+              background: "linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1))"
+            }}
+          ></div>
+        </div>
+        {/* Pattern overlay */}
+        <div className="absolute inset-0 -z-10 opacity-30">
           <div 
             className="absolute top-0 left-0 w-full h-full" 
             style={{ 
@@ -440,8 +449,8 @@ export const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Step 1 */}
-            <div className="relative bg-glass rounded-xl p-8 shadow-glass feature-card animate-on-scroll">
-              <div className="absolute -top-5 -left-5 w-14 h-14 bg-primary-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+            <div className="relative bg-glass rounded-xl p-8 shadow-glass feature-card animate-on-scroll" style={{ background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" }}>
+              <div className="absolute -top-5 -left-5 w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg" style={{ background: "linear-gradient(90deg, #6366f1, #ec4899)" }}>
                 1
               </div>
               <div className="text-center mt-6">
@@ -472,9 +481,12 @@ export const Home: React.FC = () => {
             {/* Step 2 */}
             <div 
               className="relative bg-glass rounded-xl p-8 shadow-glass feature-card animate-on-scroll" 
-              style={{ animationDelay: "0.1s" }}
+              style={{ 
+                animationDelay: "0.1s",
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" 
+              }}
             >
-              <div className="absolute -top-5 -left-5 w-14 h-14 bg-primary-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              <div className="absolute -top-5 -left-5 w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg" style={{ background: "linear-gradient(90deg, #6366f1, #ec4899)" }}>
                 2
               </div>
               <div className="text-center mt-6">
@@ -505,9 +517,12 @@ export const Home: React.FC = () => {
             {/* Step 3 */}
             <div 
               className="relative bg-glass rounded-xl p-8 shadow-glass feature-card animate-on-scroll" 
-              style={{ animationDelay: "0.2s" }}
+              style={{ 
+                animationDelay: "0.2s",
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" 
+              }}
             >
-              <div className="absolute -top-5 -left-5 w-14 h-14 bg-primary-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              <div className="absolute -top-5 -left-5 w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg" style={{ background: "linear-gradient(90deg, #6366f1, #ec4899)" }}>
                 3
               </div>
               <div className="text-center mt-6">
@@ -538,9 +553,12 @@ export const Home: React.FC = () => {
             {/* Step 4 */}
             <div 
               className="relative bg-glass rounded-xl p-8 shadow-glass feature-card animate-on-scroll" 
-              style={{ animationDelay: "0.3s" }}
+              style={{ 
+                animationDelay: "0.3s",
+                background: "linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7))" 
+              }}
             >
-              <div className="absolute -top-5 -left-5 w-14 h-14 bg-primary-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              <div className="absolute -top-5 -left-5 w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg" style={{ background: "linear-gradient(90deg, #6366f1, #ec4899)" }}>
                 4
               </div>
               <div className="text-center mt-6">
@@ -572,7 +590,11 @@ export const Home: React.FC = () => {
           <div className="mt-16 text-center animate-on-scroll">
             <Link
               href="/signup"
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white btn-gradient focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-lg text-white shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform transition-all hover:scale-105 hover:shadow-2xl"
+              style={{ 
+                background: "linear-gradient(90deg, #6366f1, #ec4899)",
+                boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.4), 0 5px 10px -5px rgba(236, 72, 153, 0.3)"
+              }}
             >
               Get Started Today
               <svg 
