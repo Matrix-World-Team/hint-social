@@ -63,6 +63,12 @@ export const Navbar: React.FC = () => {
               >
                 Features
               </button>
+              <Link 
+                href="/feed" 
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-800 hover:text-primary-600 transition duration-150 ease-in-out"
+              >
+                Feed
+              </Link>
             </div>
             
             {/* Auth buttons */}
@@ -120,6 +126,12 @@ export const Navbar: React.FC = () => {
             >
               Features
             </button>
+            <Link 
+              href="/feed"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-800 hover:text-primary-600 hover:bg-gray-100 w-full text-left"
+            >
+              Feed
+            </Link>
           </div>
         </div>
       </nav>
