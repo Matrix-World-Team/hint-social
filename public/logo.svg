@@ -1,0 +1,11 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" class="w-full h-full">
+  <g fill="currentColor">
+    <path d="M20,10 L40,30 L20,50" stroke-width="4" stroke="currentColor" fill="none"/>
+    <path d="M60,10 L60,50" stroke-width="4" stroke="currentColor" fill="none"/>
+    <circle cx="80" cy="30" r="4"/>
+    <path d="M100,10 L100,50" stroke-width="4" stroke="currentColor" fill="none"/>
+    <path d="M120,30 L140,30" stroke-width="4" stroke="currentColor" fill="none"/>
+  </g>
+  <text x="150" y="35" font-family="Arial" font-weight="bold" font-size="24">HINT</text>
+</svg>
