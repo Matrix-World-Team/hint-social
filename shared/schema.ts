@@ -139,6 +139,54 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const signupSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username cannot exceed 20 characters"),
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(100),
+  confirmPassword: z.string(),
+  birthMonth: z.string().min(1, "Month is required"),
+  birthDay: z.string().min(1, "Day is required"),
+  birthYear: z.string().min(4, "Year is required"),
+  country: z.string().min(1, "Country is required"),
+  countryCode: z.string().min(1, "Country code is required"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+}).refine(data => {
+  // Validate that the birth date is properly formed
+  const month = parseInt(data.birthMonth);
+  const day = parseInt(data.birthDay);
+  const year = parseInt(data.birthYear);
+  
+  // Basic validation for month and day
+  return month >= 1 && month <= 12 && day >= 1 && day <= 31;
+}, {
+  message: "Invalid birth date",
+  path: ["birthDay"],
+}).refine(data => {
+  // Calculate age from birth date
+  const birthDate = new Date(
+    parseInt(data.birthYear),
+    parseInt(data.birthMonth) - 1,
+    parseInt(data.birthDay)
+  );
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  // Adjust age if birthday hasn't occurred yet this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  // Ensure user is at least 13 years old
+  return age >= 13;
+}, {
+  message: "You must be at least 13 years old to register",
+  path: ["birthYear"],
+});
+
 export const postSchema = z.object({
   content: z.string().min(1, "Post content is required").max(280, "Maximum 280 characters"),
   imageUrl: z.string().optional().nullable(),
