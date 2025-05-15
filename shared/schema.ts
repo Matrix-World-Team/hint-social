@@ -141,7 +141,7 @@ export const loginSchema = z.object({
 
 export const postSchema = z.object({
   content: z.string().min(1, "Post content is required").max(280, "Maximum 280 characters"),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
 });
 
 export const commentSchema = z.object({

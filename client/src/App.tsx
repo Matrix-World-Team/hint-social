@@ -10,6 +10,9 @@ import { SignupPage } from "@/pages/signup";
 import { FeedPage } from "@/pages/feed";
 import { ProfilePage } from "@/pages/profile";
 import { SearchPage } from "@/pages/search";
+import { SettingsPage } from "@/pages/settings";
+import { MessagesPage } from "@/pages/messages";
+import { AdminPage } from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -44,6 +47,10 @@ function Router() {
       <Route path="/search" component={SearchPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
+      <Route path="/settings" component={SettingsPage} />
+      <Route path="/messages" component={MessagesPage} />
+      <Route path="/admin/:page" component={AdminPage} />
+      <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );
